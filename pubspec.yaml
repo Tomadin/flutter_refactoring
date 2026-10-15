@@ -1,0 +1,21 @@
+name: refactor_ejemplos
+description: Ejemplos de refactoring en Dart (ITU - Programación de Aplicaciones para Celulares).
+publish_to: 'none'
+version: 1.0.0
+
+environment:
+  # 3.8 o posterior: dart format usa el estilo nuevo ("tall").
+  sdk: ^3.8.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  # Reglas recomendadas por el equipo de Flutter (apunte de Código limpio).
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

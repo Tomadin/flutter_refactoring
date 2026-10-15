@@ -1,0 +1,26 @@
+# Configuración del analizador (apunte de Código limpio, sección 7).
+# `flutter analyze` y el editor leen este archivo.
+
+# Reglas recomendadas para Flutter.
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # Reglas extra que activamos en la cátedra.
+    prefer_const_constructors: true
+    prefer_single_quotes: true
+    directives_ordering: true
+    always_declare_return_types: true
+
+# Ancho máximo de línea para `dart format`.
+formatter:
+  page_width: 80
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
