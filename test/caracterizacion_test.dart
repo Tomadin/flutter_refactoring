@@ -44,6 +44,19 @@ void main() {
 
       expect(servicio.ultimoPedido, isNull);
     });
+
+    test('f(true) vuelve a pedir los productos al servicio', () async {
+      final servicio = ServicioFalso(carritoSinDescuento); // comienza con llamadas = 0
+      final vm = CVM(CarritoRepository(service: servicio));
+
+
+      await vm.f(false); //llamadas = 1
+
+      await vm.f(true); //llamadas = 2
+
+      expect(servicio.llamadas, 2);
+
+    });
   });
 
   // Las pruebas de pantalla cubren lo que las de arriba no ven: los tres
