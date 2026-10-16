@@ -17,12 +17,12 @@ void main() {
     test('las dos versiones calculan el mismo total ($nombre)', () async {
       final repositorio = CarritoRepository(service: ServicioFalso(items));
       final limpio = CarritoViewModel(repositorio: repositorio);
-      final vmSucio = sucio.CVM(repositorio);
+      final vmSucio = sucio.CarritoViewModel(repositorio);
 
       await limpio.cargar();
       await vmSucio.f(false);
 
-      expect(vmSucio.t(), limpio.totalTexto);
+      expect(vmSucio.totalTexto(), limpio.totalTexto);
     });
   }
 }

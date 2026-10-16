@@ -21,7 +21,7 @@ void main() {
   group('CVM', () {
     test('confirmar envía el pedido con el descuento aplicado', () async {
       final servicio = ServicioFalso(carritoConDescuento); // $ 60000
-      final vm = CVM(CarritoRepository(service: servicio));
+      final vm = CarritoViewModel(CarritoRepository(service: servicio));
       await vm.f(false);
 
       await vm.confirmar();
@@ -32,12 +32,12 @@ void main() {
         'total_centavos': 5400000,
       });
       // Y después de confirmar, el carrito queda vacío.
-      expect(vm.t(), '\$ 0.00');
+      expect(vm.totalTexto(), '\$ 0.00');
     });
 
     test('confirmar no hace nada si el carrito está vacío', () async {
       final servicio = ServicioFalso([]);
-      final vm = CVM(CarritoRepository(service: servicio));
+      final vm = CarritoViewModel(CarritoRepository(service: servicio));
       await vm.f(false);
 
       await vm.confirmar();
@@ -47,7 +47,7 @@ void main() {
 
     test('f(true) vuelve a pedir los productos al servicio', () async {
       final servicio = ServicioFalso(carritoSinDescuento); // comienza con llamadas = 0
-      final vm = CVM(CarritoRepository(service: servicio));
+      final vm = CarritoViewModel(CarritoRepository(service: servicio));
 
 
       await vm.f(false); //llamadas = 1
@@ -66,7 +66,7 @@ void main() {
       final repositorio = CarritoRepository(service: ServicioQueFalla());
 
       await tester.pumpWidget(
-        MaterialApp(home: PantallaCarrito2(r: repositorio)),
+        MaterialApp(home: PantallaCarrito2(repository: repositorio)),
       );
       await tester.pumpAndSettle(); // espera a que termine de cargar
 
@@ -81,7 +81,7 @@ void main() {
       final repositorio = CarritoRepository(service: servicio);
 
       await tester.pumpWidget(
-        MaterialApp(home: PantallaCarrito2(r: repositorio)),
+        MaterialApp(home: PantallaCarrito2(repository: repositorio)),
       );
       await tester.pumpAndSettle();
 

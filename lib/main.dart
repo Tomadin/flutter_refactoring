@@ -75,7 +75,7 @@ class MenuScreen extends StatelessWidget {
   }
 
   void _abrirVersionSucia(BuildContext context) {
-    _abrir(context, PantallaCarrito2(r: repositorio));
+    _abrir(context, PantallaCarrito2(repository: repositorio));
   }
 
   void _abrir(BuildContext context, Widget pantalla) {

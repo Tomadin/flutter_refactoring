@@ -19,56 +19,62 @@ import 'package:flutter/material.dart';
 import '../data/repositories/carrito_repository.dart';
 import '../domain/models/producto.dart';
 
+enum EstadoCarga {
+  cargando,
+  exito,
+  error,
+}
+
 // clase del view model
-class CVM extends ChangeNotifier {
-  CVM(this.r);
-  CarritoRepository r;
-  List<Producto> l = [];
-  int e = 0; // 0 = cargando, 1 = ok, 2 = error
+class CarritoViewModel extends ChangeNotifier {
+  CarritoViewModel(this.repository);
+  CarritoRepository repository;
+  List<Producto> listaProductos = [];
+  EstadoCarga estado = EstadoCarga.cargando; // 0 = cargando, 1 = ok, 2 = error
 
   // carga
   Future<void> f(bool b) async {
-    e = 0;
+    estado = EstadoCarga.cargando;
     notifyListeners();
     try {
-      l = await r.obtenerProductos(forzarRecarga: b);
-      e = 1;
+      listaProductos = await repository.obtenerProductos(forzarRecarga: b);
+      estado = EstadoCarga.exito;
     } catch (x) {
-      e = 2;
+      estado = EstadoCarga.error;
     }
     notifyListeners();
   }
 
   // calcula el total
-  String t() {
-    double s = 0;
-    for (var i = 0; i < l.length; i++) {
-      s = s + l[i].precio;
+  String totalTexto() {
+    double subtotal = 0;
+    for (var i = 0; i < listaProductos.length; i++) {
+      subtotal = subtotal + listaProductos[i].precio;
     }
-    if (s > 50000) {
-      s = s - s * 0.1;
+    if (subtotal > 50000) {
+      subtotal = subtotal - subtotal * 0.1;
     }
-    return '\$ ${s.toStringAsFixed(2)}';
+    return '\$ ${subtotal.toStringAsFixed(2)}';
   }
 
   Future<void> confirmar() async {
-    if (l.isNotEmpty) {
-      if (e != 0) {
-        double s = 0;
-        for (var i = 0; i < l.length; i++) {
-          s = s + l[i].precio;
+    if (listaProductos.isNotEmpty) {
+      if (estado != 0) {
+        double subtotal = 0;
+        for (var i = 0; i < listaProductos.length; i++) {
+          subtotal = subtotal + listaProductos[i].precio;
         }
-        if (s > 50000) {
-          s = s * 0.9;
+        if (subtotal > 50000) {
+          subtotal = subtotal * 0.9;
         }
-        e = 0;
+        estado = EstadoCarga.cargando;
         notifyListeners();
         try {
-          await r.enviarPedido(l, s);
-          l = [];
-          e = 1;
+          await repository.enviarPedido(listaProductos, subtotal);
+          listaProductos = [];
+          estado = EstadoCarga.exito;
         } catch (x) {
-          e = 2;
+          estado = EstadoCarga.error;
         }
         notifyListeners();
         // final viejo = await r.obtenerProductos(forzarRecarga: true);
@@ -78,19 +84,19 @@ class CVM extends ChangeNotifier {
 }
 
 class PantallaCarrito2 extends StatefulWidget {
-  const PantallaCarrito2({super.key, required this.r});
-  final CarritoRepository r;
+  const PantallaCarrito2({super.key, required this.repository});
+  final CarritoRepository repository;
   @override
   State<PantallaCarrito2> createState() => _PantallaCarrito2State();
 }
 
 class _PantallaCarrito2State extends State<PantallaCarrito2> {
-  late CVM vm;
+  late CarritoViewModel vm;
 
   @override
   void initState() {
     super.initState();
-    vm = CVM(widget.r);
+    vm = CarritoViewModel(widget.repository);
     vm.f(false);
   }
 
@@ -101,8 +107,8 @@ class _PantallaCarrito2State extends State<PantallaCarrito2> {
   }
 
   // arma un item
-  Widget _buildItem(Producto p) {
-    return ListTile(title: Text(p.nombre), trailing: Text('\$ ${p.precio.toStringAsFixed(2)}'));
+  Widget _buildItem(Producto prod) {
+    return ListTile(title: Text(prod.nombre), trailing: Text('\$ ${prod.precio.toStringAsFixed(2)}'));
   }
 
   @override
@@ -114,25 +120,25 @@ class _PantallaCarrito2State extends State<PantallaCarrito2> {
       body: ListenableBuilder(
         listenable: vm,
         builder: (context, child) {
-          if (vm.e == 0) {
+          if (vm.estado == EstadoCarga.cargando) {
             return const Center(child: CircularProgressIndicator());
           } else {
-            if (vm.e == 2) {
+            if (vm.estado == EstadoCarga.error) {
               return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
                 const Text('No se pudo completar la operación.'),
                 const SizedBox(height: 12),
                 FilledButton(onPressed: () => vm.f(false), child: const Text('Reintentar')),
               ]));
             } else {
-              if (vm.l.isEmpty) {
+              if (vm.listaProductos.isEmpty) {
                 return const Center(child: Text('No hay productos en el carrito.'));
               }
               return Column(children: [
-                Expanded(child: ListView(children: [for (var p in vm.l) _buildItem(p)])),
+                Expanded(child: ListView(children: [for (var prod in vm.listaProductos) _buildItem(prod)])),
                 Padding(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                  Text('Total: ${vm.t()}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text('Total: ${vm.totalTexto()}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 12),
-                  FilledButton(onPressed: vm.l.isNotEmpty && vm.e != 0 ? () => vm.confirmar() : null, child: const Text('Confirmar compra')),
+                  FilledButton(onPressed: vm.listaProductos.isNotEmpty && vm.estado != EstadoCarga.cargando ? () => vm.confirmar() : null, child: const Text('Confirmar compra')),
                 ])),
               ]);
             }
