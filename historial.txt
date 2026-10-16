@@ -1,0 +1,15 @@
+f98f990 dart format, analyze y test: cierre del refactoring
+4e64381 abstraer funcion formatearPrecio y borrar comentarios que sobran y codigo muerto
+29def92 Mover regla a la capa correcta: puedeConfirmar y regla en confirmarCompra
+b28330c Unificar descuento y total (la pantalla y el pedido diferian en un centavo)
+c2d4a77 Crear prueba del centavo (falla)
+10f783d extraer función calcular subtotal con fold
+c184971 extraer funcion calcular subtotal
+e6b3874 eliminar numeros magicos y reemplazar por variables descriptivas
+948c3e7 reemplazar parametro bool por forzarRecarga
+e4eff8d encapsular campos del CarritoViewModel mediante getters
+5c17e5a Eliminar comentarios antiguos sin uso
+a83f416 Refactorizando variables por nombres representativos
+2afb7b4 agregue test de caracterizacion
+31f40fd Punto de partida
+fbdc616 first commit
