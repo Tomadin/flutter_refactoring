@@ -20,7 +20,7 @@ void main() {
       final vmSucio = sucio.CarritoViewModel(repositorio);
 
       await limpio.cargar();
-      await vmSucio.f(false);
+      await vmSucio.f();
 
       expect(vmSucio.totalTexto(), limpio.totalTexto);
     });

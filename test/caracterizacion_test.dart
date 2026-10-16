@@ -22,7 +22,7 @@ void main() {
     test('confirmar envía el pedido con el descuento aplicado', () async {
       final servicio = ServicioFalso(carritoConDescuento); // $ 60000
       final vm = CarritoViewModel(CarritoRepository(service: servicio));
-      await vm.f(false);
+      await vm.f();
 
       await vm.confirmar();
 
@@ -38,7 +38,7 @@ void main() {
     test('confirmar no hace nada si el carrito está vacío', () async {
       final servicio = ServicioFalso([]);
       final vm = CarritoViewModel(CarritoRepository(service: servicio));
-      await vm.f(false);
+      await vm.f();
 
       await vm.confirmar();
 
@@ -50,9 +50,9 @@ void main() {
       final vm = CarritoViewModel(CarritoRepository(service: servicio));
 
 
-      await vm.f(false); //llamadas = 1
+      await vm.f(); //llamadas = 1
 
-      await vm.f(true); //llamadas = 2
+      await vm.f(forzarRecarga: true); //llamadas = 2
 
       expect(servicio.llamadas, 2);
 

@@ -37,11 +37,13 @@ class CarritoViewModel extends ChangeNotifier {
   EstadoCarga get estado => _estado;
 
   // carga
-  Future<void> f(bool b) async {
+  Future<void> f({bool forzarRecarga = false}) async {
     _estado = EstadoCarga.cargando;
     notifyListeners();
     try {
-      _listaProductos = await _repository.obtenerProductos(forzarRecarga: b);
+      _listaProductos = await _repository.obtenerProductos(
+        forzarRecarga: forzarRecarga,
+      );
       _estado = EstadoCarga.exito;
     } catch (x) {
       _estado = EstadoCarga.error;
@@ -100,7 +102,7 @@ class _PantallaCarrito2State extends State<PantallaCarrito2> {
   void initState() {
     super.initState();
     vm = CarritoViewModel(widget.repository);
-    vm.f(false);
+    vm.f();
   }
 
   @override
@@ -118,7 +120,7 @@ class _PantallaCarrito2State extends State<PantallaCarrito2> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Mi carrito (versión sucia)'), actions: [
-        IconButton(icon: const Icon(Icons.refresh), onPressed: () => vm.f(true)),
+        IconButton(icon: const Icon(Icons.refresh), onPressed: () => vm.f(forzarRecarga: true)),
       ]),
       body: ListenableBuilder(
         listenable: vm,
@@ -130,7 +132,7 @@ class _PantallaCarrito2State extends State<PantallaCarrito2> {
               return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
                 const Text('No se pudo completar la operación.'),
                 const SizedBox(height: 12),
-                FilledButton(onPressed: () => vm.f(false), child: const Text('Reintentar')),
+                FilledButton(onPressed: () => vm.f(), child: const Text('Reintentar')),
               ]));
             } else {
               if (vm.listaProductos.isEmpty) {
