@@ -27,20 +27,24 @@ enum EstadoCarga {
 
 // clase del view model
 class CarritoViewModel extends ChangeNotifier {
-  CarritoViewModel(this.repository);
-  CarritoRepository repository;
-  List<Producto> listaProductos = [];
-  EstadoCarga estado = EstadoCarga.cargando;
+  CarritoViewModel(this._repository);
+  final CarritoRepository _repository;
+
+  List<Producto> _listaProductos = [];
+  EstadoCarga _estado = EstadoCarga.cargando;
+
+  List<Producto> get listaProductos => _listaProductos;
+  EstadoCarga get estado => _estado;
 
   // carga
   Future<void> f(bool b) async {
-    estado = EstadoCarga.cargando;
+    _estado = EstadoCarga.cargando;
     notifyListeners();
     try {
-      listaProductos = await repository.obtenerProductos(forzarRecarga: b);
-      estado = EstadoCarga.exito;
+      _listaProductos = await _repository.obtenerProductos(forzarRecarga: b);
+      _estado = EstadoCarga.exito;
     } catch (x) {
-      estado = EstadoCarga.error;
+      _estado = EstadoCarga.error;
     }
     notifyListeners();
   }
@@ -48,8 +52,8 @@ class CarritoViewModel extends ChangeNotifier {
   // calcula el total
   String totalTexto() {
     double subtotal = 0;
-    for (var i = 0; i < listaProductos.length; i++) {
-      subtotal = subtotal + listaProductos[i].precio;
+    for (var i = 0; i < _listaProductos.length; i++) {
+      subtotal = subtotal + _listaProductos[i].precio;
     }
     if (subtotal > 50000) {
       subtotal = subtotal - subtotal * 0.1;
@@ -58,23 +62,23 @@ class CarritoViewModel extends ChangeNotifier {
   }
 
   Future<void> confirmar() async {
-    if (listaProductos.isNotEmpty) {
-      if (estado != 0) {
+    if (_listaProductos.isNotEmpty) {
+      if (_estado != EstadoCarga.cargando) {
         double subtotal = 0;
-        for (var i = 0; i < listaProductos.length; i++) {
-          subtotal = subtotal + listaProductos[i].precio;
+        for (var i = 0; i < _listaProductos.length; i++) {
+          subtotal = subtotal + _listaProductos[i].precio;
         }
         if (subtotal > 50000) {
           subtotal = subtotal * 0.9;
         }
-        estado = EstadoCarga.cargando;
+        _estado = EstadoCarga.cargando;
         notifyListeners();
         try {
-          await repository.enviarPedido(listaProductos, subtotal);
-          listaProductos = [];
-          estado = EstadoCarga.exito;
+          await _repository.enviarPedido(_listaProductos, subtotal);
+          _listaProductos = [];
+          _estado = EstadoCarga.exito;
         } catch (x) {
-          estado = EstadoCarga.error;
+          _estado = EstadoCarga.error;
         }
         notifyListeners();
       }
