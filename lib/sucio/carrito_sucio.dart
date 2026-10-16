@@ -30,7 +30,7 @@ class CarritoViewModel extends ChangeNotifier {
   CarritoViewModel(this.repository);
   CarritoRepository repository;
   List<Producto> listaProductos = [];
-  EstadoCarga estado = EstadoCarga.cargando; // 0 = cargando, 1 = ok, 2 = error
+  EstadoCarga estado = EstadoCarga.cargando;
 
   // carga
   Future<void> f(bool b) async {
@@ -77,7 +77,6 @@ class CarritoViewModel extends ChangeNotifier {
           estado = EstadoCarga.error;
         }
         notifyListeners();
-        // final viejo = await r.obtenerProductos(forzarRecarga: true);
       }
     }
   }
