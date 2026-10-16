@@ -54,13 +54,8 @@ class CarritoViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  double get subtotal {
-    double subtotal = 0;
-    for (var i = 0; i < _listaProductos.length; i++) {
-      subtotal = subtotal + _listaProductos[i].precio;
-    }
-    return subtotal;
-  }
+  double get subtotal =>
+      _listaProductos.fold<double>(0, (suma, producto) => suma + producto.precio);
 
   // calcula el total
   String totalTexto() {
