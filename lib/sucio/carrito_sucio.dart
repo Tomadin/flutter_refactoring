@@ -54,32 +54,34 @@ class CarritoViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // calcula el total
-  String totalTexto() {
+  double get subtotal {
     double subtotal = 0;
     for (var i = 0; i < _listaProductos.length; i++) {
       subtotal = subtotal + _listaProductos[i].precio;
     }
-    if (subtotal > _montoMinimoParaDescuento) {
-      subtotal = subtotal - subtotal * _porcentajeDescuento;
+    return subtotal;
+  }
+
+  // calcula el total
+  String totalTexto() {
+    double total = subtotal; //llama a la función
+    if (total > _montoMinimoParaDescuento) {
+      total = total - total * _porcentajeDescuento;
     }
-    return '\$ ${subtotal.toStringAsFixed(2)}';
+    return '\$ ${total.toStringAsFixed(2)}';
   }
 
   Future<void> confirmar() async {
     if (_listaProductos.isNotEmpty) {
       if (_estado != EstadoCarga.cargando) {
-        double subtotal = 0;
-        for (var i = 0; i < _listaProductos.length; i++) {
-          subtotal = subtotal + _listaProductos[i].precio;
-        }
-        if (subtotal > _montoMinimoParaDescuento) {
-          subtotal = subtotal * 0.9;
+        double total = subtotal; //llama a la función
+        if (total > _montoMinimoParaDescuento) {
+          total = total * 0.9;
         }
         _estado = EstadoCarga.cargando;
         notifyListeners();
         try {
-          await _repository.enviarPedido(_listaProductos, subtotal);
+          await _repository.enviarPedido(_listaProductos, total);
           _listaProductos = [];
           _estado = EstadoCarga.exito;
         } catch (x) {
