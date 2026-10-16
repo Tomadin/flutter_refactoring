@@ -57,26 +57,21 @@ class CarritoViewModel extends ChangeNotifier {
   double get subtotal =>
       _listaProductos.fold<double>(0, (suma, producto) => suma + producto.precio);
 
-  // calcula el total
-  String totalTexto() {
-    double total = subtotal; //llama a la función
-    if (total > _montoMinimoParaDescuento) {
-      total = total - total * _porcentajeDescuento;
-    }
-    return '\$ ${total.toStringAsFixed(2)}';
-  }
+  double get descuento =>
+      subtotal > _montoMinimoParaDescuento ? subtotal * _porcentajeDescuento : 0;
+
+  double get total => ((subtotal - descuento) * 100).round() / 100;
+
+  String totalTexto() => '\$ ${total.toStringAsFixed(2)}';
 
   Future<void> confirmar() async {
     if (_listaProductos.isNotEmpty) {
       if (_estado != EstadoCarga.cargando) {
-        double total = subtotal; //llama a la función
-        if (total > _montoMinimoParaDescuento) {
-          total = total * 0.9;
-        }
+        final totalAEnviar = total;
         _estado = EstadoCarga.cargando;
         notifyListeners();
         try {
-          await _repository.enviarPedido(_listaProductos, total);
+          await _repository.enviarPedido(_listaProductos, totalAEnviar);
           _listaProductos = [];
           _estado = EstadoCarga.exito;
         } catch (x) {
