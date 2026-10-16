@@ -15,6 +15,7 @@
 // =====================================================================
 
 import 'package:flutter/material.dart';
+import 'package:refactor_ejemplos/ui/core/formato.dart';
 
 import '../data/repositories/carrito_repository.dart';
 import '../domain/models/producto.dart';
@@ -25,7 +26,6 @@ enum EstadoCarga {
   error,
 }
 
-// clase del view model
 class CarritoViewModel extends ChangeNotifier {
   static const double _montoMinimoParaDescuento = 50000;
   static const double _porcentajeDescuento = 0.1;
@@ -39,7 +39,6 @@ class CarritoViewModel extends ChangeNotifier {
   List<Producto> get listaProductos => _listaProductos;
   EstadoCarga get estado => _estado;
 
-  // carga
   Future<void> f({bool forzarRecarga = false}) async {
     _estado = EstadoCarga.cargando;
     notifyListeners();
@@ -62,11 +61,12 @@ class CarritoViewModel extends ChangeNotifier {
 
   double get total => ((subtotal - descuento) * 100).round() / 100;
 
-  String totalTexto() => '\$ ${total.toStringAsFixed(2)}';
+  String totalTexto() => formatearPrecio(total);
 
   bool get puedeConfirmar =>
       _listaProductos.isNotEmpty && _estado != EstadoCarga.cargando;
 
+  String formatearPrecio(double precio) => '\$ ${precio.toStringAsFixed(2)}';
 
   Future<void> confirmarCompra() async {
     if (!puedeConfirmar) return;
@@ -107,10 +107,10 @@ class _PantallaCarrito2State extends State<PantallaCarrito2> {
     vm.dispose();
     super.dispose();
   }
-
-  // arma un item
+  
   Widget _buildItem(Producto prod) {
-    return ListTile(title: Text(prod.nombre), trailing: Text('\$ ${prod.precio.toStringAsFixed(2)}'));
+    return ListTile(title: Text(prod.nombre), trailing: Text(formatearPrecio(prod.precio)),
+    );
   }
 
   @override
