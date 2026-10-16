@@ -20,11 +20,7 @@ import 'package:refactor_ejemplos/ui/core/formato.dart';
 import '../data/repositories/carrito_repository.dart';
 import '../domain/models/producto.dart';
 
-enum EstadoCarga {
-  cargando,
-  exito,
-  error,
-}
+enum EstadoCarga { cargando, exito, error }
 
 class CarritoViewModel extends ChangeNotifier {
   static const double _montoMinimoParaDescuento = 50000;
@@ -53,11 +49,14 @@ class CarritoViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  double get subtotal =>
-      _listaProductos.fold<double>(0, (suma, producto) => suma + producto.precio);
+  double get subtotal => _listaProductos.fold<double>(
+    0,
+    (suma, producto) => suma + producto.precio,
+  );
 
-  double get descuento =>
-      subtotal > _montoMinimoParaDescuento ? subtotal * _porcentajeDescuento : 0;
+  double get descuento => subtotal > _montoMinimoParaDescuento
+      ? subtotal * _porcentajeDescuento
+      : 0;
 
   double get total => ((subtotal - descuento) * 100).round() / 100;
 
@@ -82,7 +81,7 @@ class CarritoViewModel extends ChangeNotifier {
       _estado = EstadoCarga.error;
     }
     notifyListeners();
-    }
+  }
 }
 
 class PantallaCarrito2 extends StatefulWidget {
@@ -107,18 +106,26 @@ class _PantallaCarrito2State extends State<PantallaCarrito2> {
     vm.dispose();
     super.dispose();
   }
-  
+
   Widget _buildItem(Producto prod) {
-    return ListTile(title: Text(prod.nombre), trailing: Text(formatearPrecio(prod.precio)),
+    return ListTile(
+      title: Text(prod.nombre),
+      trailing: Text(formatearPrecio(prod.precio)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Mi carrito (versión sucia)'), actions: [
-        IconButton(icon: const Icon(Icons.refresh), onPressed: () => vm.f(forzarRecarga: true)),
-      ]),
+      appBar: AppBar(
+        title: const Text('Mi carrito (versión sucia)'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => vm.f(forzarRecarga: true),
+          ),
+        ],
+      ),
       body: ListenableBuilder(
         listenable: vm,
         builder: (context, child) {
@@ -126,26 +133,58 @@ class _PantallaCarrito2State extends State<PantallaCarrito2> {
             return const Center(child: CircularProgressIndicator());
           } else {
             if (vm.estado == EstadoCarga.error) {
-              return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-                const Text('No se pudo completar la operación.'),
-                const SizedBox(height: 12),
-                FilledButton(onPressed: () => vm.f(), child: const Text('Reintentar')),
-              ]));
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('No se pudo completar la operación.'),
+                    const SizedBox(height: 12),
+                    FilledButton(
+                      onPressed: () => vm.f(),
+                      child: const Text('Reintentar'),
+                    ),
+                  ],
+                ),
+              );
             } else {
               if (vm.listaProductos.isEmpty) {
-                return const Center(child: Text('No hay productos en el carrito.'));
+                return const Center(
+                  child: Text('No hay productos en el carrito.'),
+                );
               }
-              return Column(children: [
-                Expanded(child: ListView(children: [for (var prod in vm.listaProductos) _buildItem(prod)])),
-                Padding(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                  Text('Total: ${vm.totalTexto()}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 12),
-                  FilledButton(
-                    onPressed: vm.puedeConfirmar ? vm.confirmarCompra : null,
-                    child: const Text('Confirmar compra'),
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        for (var prod in vm.listaProductos) _buildItem(prod),
+                      ],
+                    ),
                   ),
-                ])),
-              ]);
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          'Total: ${vm.totalTexto()}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        FilledButton(
+                          onPressed: vm.puedeConfirmar
+                              ? vm.confirmarCompra
+                              : null,
+                          child: const Text('Confirmar compra'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
             }
           }
         },

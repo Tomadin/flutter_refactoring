@@ -97,8 +97,9 @@ class _ContenidoCarrito extends StatelessWidget {
           subtotal: viewModel.subtotalTexto,
           descuento: viewModel.descuentoTexto,
           total: viewModel.totalTexto,
-          onConfirmar:
-              viewModel.puedeConfirmar ? viewModel.confirmarCompra : null,
+          onConfirmar: viewModel.puedeConfirmar
+              ? viewModel.confirmarCompra
+              : null,
         ),
       ],
     );

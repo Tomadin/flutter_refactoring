@@ -55,11 +55,7 @@ const pava = {
   'precio_centavos': 6000000,
 };
 
-const auris = {
-  'id': 'p7',
-  'nombre': 'Auriculares',
-  'precio_centavos': 5000005,
-};
+const auris = {'id': 'p7', 'nombre': 'Auriculares', 'precio_centavos': 5000005};
 
 /// Carrito de $ 5700: no llega al mínimo para el descuento.
 const carritoSinDescuento = [yerba, fideos];

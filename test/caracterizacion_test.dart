@@ -46,16 +46,16 @@ void main() {
     });
 
     test('f(true) vuelve a pedir los productos al servicio', () async {
-      final servicio = ServicioFalso(carritoSinDescuento); // comienza con llamadas = 0
+      final servicio = ServicioFalso(
+        carritoSinDescuento,
+      ); // comienza con llamadas = 0
       final vm = CarritoViewModel(CarritoRepository(service: servicio));
-
 
       await vm.f(); //llamadas = 1
 
       await vm.f(forzarRecarga: true); //llamadas = 2
 
       expect(servicio.llamadas, 2);
-
     });
   });
 
@@ -74,21 +74,24 @@ void main() {
       expect(find.text('Reintentar'), findsOneWidget);
     });
 
-    test('lo que muestra la pantalla es lo que se envía (prueba del centavo)',
-            () async {
-          final servicio = ServicioFalso(carritoCentavo); // un producto de $ 50000.05
-          final vm = CarritoViewModel(CarritoRepository(service: servicio));
-          await vm.f();
+    test(
+      'lo que muestra la pantalla es lo que se envía (prueba del centavo)',
+      () async {
+        final servicio = ServicioFalso(
+          carritoCentavo,
+        ); // un producto de $ 50000.05
+        final vm = CarritoViewModel(CarritoRepository(service: servicio));
+        await vm.f();
 
-          final textoTotal = vm.totalTexto(); // '$ 45000.04' o '$ 45000.05'
-          final centavosMostrados =
-          (double.parse(textoTotal.replaceAll('\$ ', '')) * 100).round();
+        final textoTotal = vm.totalTexto(); // '$ 45000.04' o '$ 45000.05'
+        final centavosMostrados =
+            (double.parse(textoTotal.replaceAll('\$ ', '')) * 100).round();
 
-          await vm.confirmarCompra();
-          print('${vm.estado} / ${vm.listaProductos.length}');
+        await vm.confirmarCompra();
 
-          expect(servicio.ultimoPedido!['total_centavos'], centavosMostrados);
-        });
+        expect(servicio.ultimoPedido!['total_centavos'], centavosMostrados);
+      },
+    );
 
     testWidgets('muestra el total y al confirmar vacía el carrito', (
       tester,

@@ -62,7 +62,10 @@ class _FilaImporte extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [Text(etiqueta, style: estilo), Text(importe, style: estilo)],
+      children: [
+        Text(etiqueta, style: estilo),
+        Text(importe, style: estilo),
+      ],
     );
   }
 }
