@@ -24,7 +24,7 @@ void main() {
       final vm = CarritoViewModel(CarritoRepository(service: servicio));
       await vm.f();
 
-      await vm.confirmar();
+      await vm.confirmarCompra();
 
       // Lo que le llegó al servicio: 60000 - 10 % = 54000 pesos.
       expect(servicio.ultimoPedido, {
@@ -40,7 +40,7 @@ void main() {
       final vm = CarritoViewModel(CarritoRepository(service: servicio));
       await vm.f();
 
-      await vm.confirmar();
+      await vm.confirmarCompra();
 
       expect(servicio.ultimoPedido, isNull);
     });
@@ -84,7 +84,7 @@ void main() {
           final centavosMostrados =
           (double.parse(textoTotal.replaceAll('\$ ', '')) * 100).round();
 
-          await vm.confirmar();
+          await vm.confirmarCompra();
           print('${vm.estado} / ${vm.listaProductos.length}');
 
           expect(servicio.ultimoPedido!['total_centavos'], centavosMostrados);

@@ -64,23 +64,25 @@ class CarritoViewModel extends ChangeNotifier {
 
   String totalTexto() => '\$ ${total.toStringAsFixed(2)}';
 
-  Future<void> confirmar() async {
-    if (_listaProductos.isNotEmpty) {
-      if (_estado != EstadoCarga.cargando) {
-        final totalAEnviar = total;
-        _estado = EstadoCarga.cargando;
-        notifyListeners();
-        try {
-          await _repository.enviarPedido(_listaProductos, totalAEnviar);
-          _listaProductos = [];
-          _estado = EstadoCarga.exito;
-        } catch (x) {
-          _estado = EstadoCarga.error;
-        }
-        notifyListeners();
-      }
+  bool get puedeConfirmar =>
+      _listaProductos.isNotEmpty && _estado != EstadoCarga.cargando;
+
+
+  Future<void> confirmarCompra() async {
+    if (!puedeConfirmar) return;
+
+    final totalAEnviar = total;
+    _estado = EstadoCarga.cargando;
+    notifyListeners();
+    try {
+      await _repository.enviarPedido(_listaProductos, totalAEnviar);
+      _listaProductos = [];
+      _estado = EstadoCarga.exito;
+    } catch (x) {
+      _estado = EstadoCarga.error;
     }
-  }
+    notifyListeners();
+    }
 }
 
 class PantallaCarrito2 extends StatefulWidget {
@@ -138,7 +140,10 @@ class _PantallaCarrito2State extends State<PantallaCarrito2> {
                 Padding(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                   Text('Total: ${vm.totalTexto()}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 12),
-                  FilledButton(onPressed: vm.listaProductos.isNotEmpty && vm.estado != EstadoCarga.cargando ? () => vm.confirmar() : null, child: const Text('Confirmar compra')),
+                  FilledButton(
+                    onPressed: vm.puedeConfirmar ? vm.confirmarCompra : null,
+                    child: const Text('Confirmar compra'),
+                  ),
                 ])),
               ]);
             }
