@@ -27,6 +27,9 @@ enum EstadoCarga {
 
 // clase del view model
 class CarritoViewModel extends ChangeNotifier {
+  static const double _montoMinimoParaDescuento = 50000;
+  static const double _porcentajeDescuento = 0.1;
+
   CarritoViewModel(this._repository);
   final CarritoRepository _repository;
 
@@ -57,8 +60,8 @@ class CarritoViewModel extends ChangeNotifier {
     for (var i = 0; i < _listaProductos.length; i++) {
       subtotal = subtotal + _listaProductos[i].precio;
     }
-    if (subtotal > 50000) {
-      subtotal = subtotal - subtotal * 0.1;
+    if (subtotal > _montoMinimoParaDescuento) {
+      subtotal = subtotal - subtotal * _porcentajeDescuento;
     }
     return '\$ ${subtotal.toStringAsFixed(2)}';
   }
@@ -70,7 +73,7 @@ class CarritoViewModel extends ChangeNotifier {
         for (var i = 0; i < _listaProductos.length; i++) {
           subtotal = subtotal + _listaProductos[i].precio;
         }
-        if (subtotal > 50000) {
+        if (subtotal > _montoMinimoParaDescuento) {
           subtotal = subtotal * 0.9;
         }
         _estado = EstadoCarga.cargando;
