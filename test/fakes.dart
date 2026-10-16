@@ -55,11 +55,20 @@ const pava = {
   'precio_centavos': 6000000,
 };
 
+const auris = {
+  'id': 'p7',
+  'nombre': 'Auriculares',
+  'precio_centavos': 5000005,
+};
+
 /// Carrito de $ 5700: no llega al mínimo para el descuento.
 const carritoSinDescuento = [yerba, fideos];
 
 /// Carrito de $ 60000: tiene 10 % de descuento.
 const carritoConDescuento = [pava];
+
+/// Carrito con centavos
+const carritoCentavo = [auris];
 
 /// Arma un ViewModel de referencia conectado a un [ServicioFalso].
 CarritoViewModel crearViewModel(ServicioFalso servicio) {
